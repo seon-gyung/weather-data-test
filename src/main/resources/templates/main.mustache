@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관광코스별 관광지 상세 날씨 조회서비스</title>
+
+    <!-- bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <div>
+            <input type="text" id="courseId" placeholder="코스ID 검색">
+            <button id="btn-courseId">검색</button>
+        </div>
+        <div id="result_box" class="container mt-3"></div>
+    </div>
+
+    <!-- script -->
+    <script>
+        $("#btn-courseId").click(() => {
+            download();
+        })
+        let download = async () => {
+            let courseId = $("#courseId").val();
+            let response = await fetch(`/download?courseId=${courseId}`);
+            let responseParse = await response.json();
+            let item = responseParse.response.body.items.item[0];
+            console.log(data);
+            $("#result_box").append(render(data));
+        }
+        let render = (data) => {
+            let sky = data.sky; //하늘상태
+            switch (sky) {
+                case 1: sky = "맑음";
+                    break;
+                case 2: sky = "구름";
+                    break;
+                case 3: sky = "흐림";
+                    break;
+                case 4: sky = "비";
+                    break;
+                case 5: sky = "소나기";
+                    break;
+                case 6: sky = "비눈";
+                    break;
+                case 7: sky = "눈비";
+                    break;
+                case 8: sky = "눈";
+                    break;
+            }
+            return `
+            코스명 : ${data.courseName}
+            <ul>
+                <li>지역 : ${data.courseAreaName}${data.spotAreaName}</li>
+                <li>관광지명 : ${data.spotName}</li>
+                <li>예보시간 : ${data.tm}</li>
+                <li>하늘상태 : ${sky}</li>
+                <li>강수량 : ${data.rn}</li>
+            </ul>
+            `
+        }
+    </script>
+</body>
+
+</html>
